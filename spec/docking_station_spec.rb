@@ -15,30 +15,37 @@ describe DockingStation do
 			subject.dock(bike)
 			expect(subject.release_bike).to eq bike
 		end
+
+		it 'raise error, no bikes' do
+			expect { subject.release_bike }.to raise_error("NoBikeError")
+		end
+
+
+		it 'shows docked bike with same id' do
+			bike = Bike.new
+			subject.dock(bike)
+			expect(subject.bike).to eq bike
+		end
+
+		it 'raise error, docking station full' do
+			subject.dock(Bike.new)
+			bike = Bike.new
+		    expect { subject.dock(bike)}.to raise_error("DockingStationFull")
+		end
 	end
 
-	it { is_expected.to respond_to(:dock).with(1).argument }
-
-    it 'docks bike to station' do
-		bike = Bike.new
-		expect(subject.dock(bike)).to eq bike
+	describe 'dock_bike' do
+		it { is_expected.to respond_to(:dock).with(1).argument }
+		it 'docks bike to station' do
+			bike = Bike.new
+			expect(subject.dock(bike)).to eq bike
+    	end
     end
 
-	it 'shows docked bike with same id' do
-		bike = Bike.new
-		subject.dock(bike)
-		expect(subject.bike).to eq bike
-	end
+   
 
-	it 'raise error, no bikes' do
-		expect { subject.release_bike }.to raise_error("NoBikeError")
-	end
 
-	it 'raise error, docking station full' do
-		subject.dock(Bike.new)
-		bike = Bike.new
-	  expect { subject.dock(bike)}.to raise_error("DockingStationFull")
-	end
+
 
 #	it { expect(subject.bike_count).to be <= 10 }
 #  it 'docks bike to station, increasing bike_count' do
