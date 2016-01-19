@@ -30,10 +30,16 @@ describe DockingStation do
 		expect(subject.bike).to eq bike
 	end
 
-	it 'raise error, no charge/bikes' do
+	it 'raise error, no bikes' do
 		expect { subject.release_bike }.to raise_error("NoBikeError")
 	end
-		
+
+	it 'raise error, docking station full' do
+		subject.dock(Bike.new)
+		bike = Bike.new
+	  expect { subject.dock(bike)}.to raise_error("DockingStationFull")
+	end
+
 #	it { expect(subject.bike_count).to be <= 10 }
 #  it 'docks bike to station, increasing bike_count' do
 #		initial_bikes = subject.bike_count

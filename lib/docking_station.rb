@@ -17,6 +17,7 @@ class DockingStation
     def dock(bike)
 #		@bike_count += 1
 #		@bike_count
+		raise "DockingStationFull" if (@bike != nil)
 		@bike = bike
 	end
 end
