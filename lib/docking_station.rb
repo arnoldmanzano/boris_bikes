@@ -10,15 +10,13 @@ class DockingStation
 
 	def release_bike
 #		@bike_count -= 1
-		Bike.new
+		raise "NoBikeError" if (@bike == nil)
+		@bike
 	end
 
-  def dock(bike)
+    def dock(bike)
 #		@bike_count += 1
 #		@bike_count
 		@bike = bike
 	end
-
 end
-
-docking_station = DockingStation.new
