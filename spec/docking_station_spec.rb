@@ -68,32 +68,37 @@ describe DockingStation do
 
   end
 
-  describe '#release_broken' do
+  describe '#release' do
     let(:broken_bike) { double(:broken_bike, :working => false) }
     let(:bike) { double(:bike, :working => true) }
 
-    it { is_expected.to respond_to(:release_broken) }
+    it { is_expected.to respond_to(:release) }
 
     it 'release only broken bikes' do
       subject.dock(bike)
       subject.dock(broken_bike)
-      expect(subject.release_broken).to eq [broken_bike]
+      expect(subject.release).to eq [broken_bike]
     end
 
     it 'removes broken bikes from station' do
       subject.dock(bike)
       subject.dock(broken_bike)
-      subject.release_broken
+      subject.release
       expect(subject.bikes).to eq [bike]
     end
 
     it 'raises an error when no broken bikes' do
       subject.dock(bike)
-      expect { subject.release_broken }.to raise_error("No broken bikes")
+      expect { subject.release }.to raise_error("No broken bikes")
     end
+  end
 
-#TODO remove broken bikes
-#TODO raise exception when no broken bikes
+  describe '#receive_bikes' do
+    it { is_expected.to respond_to(:receive_bikes).with(1).argument }
 
+    it 'receives fixed bikes from a van' do
+      subject.receive_bikes([bike])
+      expect(subject.bikes).to eq [bike]
+    end
   end
 end

@@ -13,6 +13,10 @@ class Garage
     @bikes
   end
 
+  def release
+    @bikes.pop(@bikes.size)
+  end
+
   private
 
   def fix_bikes

@@ -1,4 +1,3 @@
-
 require_relative 'docking_station'
 
 class Van
@@ -8,13 +7,14 @@ class Van
     @bikes = []
   end
 
-  def collect_bikes(station)
-    @bikes = station.release_broken
+  # Universal #collect method for stations and garages
+  def collect_from(station_or_garage)
+    # Requires both station and garage to have a #release method
+    @bikes = station_or_garage.release
   end
 
-  def deliver_bikes(garage)
-    garage.receive_bikes(@bikes)
-    @bikes = []
+  def deliver_to(station_or_garage)
+    station_or_garage.receive_bikes(@bikes.pop(@bikes.size))
   end
 
 end

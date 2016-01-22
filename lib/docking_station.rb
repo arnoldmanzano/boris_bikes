@@ -17,6 +17,7 @@ class DockingStation
     for i in 0...@bikes.length do
       return @bikes.delete_at(i) if @bikes[i].working
     end
+    # TODO: refactor error message
     raise "Bike is broken"
   end
 
@@ -25,13 +26,18 @@ class DockingStation
     @bikes << bike
   end
 
-  def release_broken
+  def release
     broken_bikes = []
+
     @bikes.each do |bike|
       broken_bikes << @bikes.delete(bike) if !bike.working
     end
-    
+
     !broken_bikes.empty? ? broken_bikes : raise("No broken bikes")
+  end
+
+  def receive_bikes(fixed_bikes)
+    @bikes += fixed_bikes
   end
 
   private
