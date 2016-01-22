@@ -16,9 +16,6 @@ class Garage
   private
 
   def fix_bikes
-    @bikes.each do |bike|
-      bike.fix
-    end
+    @bikes.each(&:fix)
   end
-
 end

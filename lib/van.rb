@@ -9,9 +9,7 @@ class Van
   end
 
   def collect_bikes(station)
-    @bikes = station.bikes.select do |bike|
-      !bike.working
-    end
+    @bikes = station.release_broken
   end
 
   def deliver_bikes(garage)
