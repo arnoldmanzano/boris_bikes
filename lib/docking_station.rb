@@ -25,6 +25,16 @@ class DockingStation
     @bikes << bike
   end
 
+  def release_broken
+    broken_bikes = []
+    @bikes.each do |bike|
+      broken_bikes << @bikes.delete(bike) if !bike.working
+    end
+
+    !broken_bikes.empty? ? broken_bikes : raise("No broken bikes")
+
+  end
+
   private
 
   def full?

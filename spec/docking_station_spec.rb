@@ -3,6 +3,7 @@ require 'docking_station'
 describe DockingStation do
   let(:bike) { double :bike }
 
+
   describe '#initialize' do
     it { is_expected.to respond_to :bikes }
 
@@ -67,4 +68,32 @@ describe DockingStation do
 
   end
 
+  describe '#release_broken' do
+    let(:broken_bike) { double(:broken_bike, :working => false) }
+    let(:bike) { double(:bike, :working => true) }
+
+    it { is_expected.to respond_to(:release_broken) }
+
+    it 'release only broken bikes' do
+      subject.dock(bike)
+      subject.dock(broken_bike)
+      expect(subject.release_broken).to eq [broken_bike]
+    end
+
+    it 'removes broken bikes from station' do
+      subject.dock(bike)
+      subject.dock(broken_bike)
+      subject.release_broken
+      expect(subject.bikes).to eq [bike]
+    end
+
+    it 'raises an error when no broken bikes' do
+      subject.dock(bike)
+      expect { subject.release_broken }.to raise_error("No broken bikes")
+    end
+
+#TODO remove broken bikes
+#TODO raise exception when no broken bikes
+
+  end
 end
