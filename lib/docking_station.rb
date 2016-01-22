@@ -14,11 +14,8 @@ class DockingStation
 
   def release_bike
     raise "No bikes" if empty?
-    for i in 0...@bikes.length do
-      return @bikes.delete_at(i) if @bikes[i].working
-    end
-    # TODO: refactor error message
-    raise "Bike is broken"
+    @bikes.each { |bike| return @bikes.delete(bike) if bike.working }
+    raise "No working bikes"
   end
 
   def dock(bike)

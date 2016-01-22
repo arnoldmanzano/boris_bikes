@@ -34,7 +34,7 @@ describe DockingStation do
       allow(bike).to receive(:working).and_return(false)
 
       subject.dock(bike)
-      expect{subject.release_bike}.to raise_error("Bike is broken")
+      expect{subject.release_bike}.to raise_error("No working bikes")
     end
 
     it 'will release a working bike and not a broken bike' do
@@ -94,11 +94,19 @@ describe DockingStation do
   end
 
   describe '#receive_bikes' do
+    let(:bike2) { double(:bike2) }
+
     it { is_expected.to respond_to(:receive_bikes).with(1).argument }
 
     it 'receives fixed bikes from a van' do
       subject.receive_bikes([bike])
       expect(subject.bikes).to eq [bike]
+    end
+
+    it 'adds received bike to existing bikes in station' do
+      subject.dock(bike2)
+      subject.receive_bikes([bike])
+      expect(subject.bikes).to eq [bike2, bike]
     end
   end
 end
