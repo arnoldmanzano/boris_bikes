@@ -4,7 +4,8 @@ describe Bike do
 
   describe '#initialize' do
     it "has a default state of working" do
-      expect((Bike.new).working).to be_truthy
+      # expect((Bike.new).working).to be_truthy
+      expect(subject).to be_working
     end
   end
 
