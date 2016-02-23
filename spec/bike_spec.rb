@@ -9,14 +9,14 @@ describe Bike do
     end
   end
 
-  describe '#broken' do
+  describe '#got_broken' do
     it "can be broken" do
       bike.got_broken
       expect(bike).to_not be_working
     end
   end
 
-  describe '#fix' do
+  describe '#got_fixed' do
     it "can be fixed" do
       bike.got_broken
       bike.got_fixed

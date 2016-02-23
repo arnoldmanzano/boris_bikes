@@ -13,6 +13,5 @@ class Bike
 
   def got_fixed
     @working = true
-    self
   end
 end
