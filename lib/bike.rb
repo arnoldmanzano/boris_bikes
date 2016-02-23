@@ -7,11 +7,11 @@ class Bike
     @working
   end
 
-  def broken
+  def got_broken
     @working = false
   end
 
-  def fix
+  def got_fixed
     @working = true
     self
   end
