@@ -1,5 +1,3 @@
-require_relative 'van'
-
 class Garage
   attr_reader :bikes
 

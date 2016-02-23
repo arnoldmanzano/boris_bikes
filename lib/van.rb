@@ -1,5 +1,3 @@
-require_relative 'docking_station'
-
 class Van
   attr_reader :bikes
 

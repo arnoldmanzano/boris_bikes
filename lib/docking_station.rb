@@ -14,7 +14,7 @@ class DockingStation
 
   def release_bike
     raise "No bikes" if empty?
-    @bikes.each { |bike| return @bikes.delete(bike) if bike.working }
+    @bikes.each { |bike| return @bikes.delete(bike) if bike.working? }
     raise "No working bikes"
   end
 
@@ -27,7 +27,7 @@ class DockingStation
   def release_bikes
     broken_bikes = []
     @bikes.each do |bike|
-      broken_bikes << @bikes.delete(bike) if !bike.working
+      broken_bikes << @bikes.delete(bike) if (bike.working? == false)
     end
     broken_bikes.empty? ? raise("No broken bikes") : broken_bikes
   end

@@ -2,8 +2,8 @@ require 'docking_station'
 
 describe DockingStation do
   subject(:station) { described_class.new }
-  let(:bike) { double(:bike, working: true) }
-  let(:broken_bike) { double(:bike, working: false) }
+  let(:bike) { double(:bike, working?: true) }
+  let(:broken_bike) { double(:bike, working?: false) }
   let(:van) { double(:van, bikes: [bike]) }
 
   describe '#initialize' do
@@ -60,7 +60,8 @@ describe DockingStation do
     end
 
     it 'releases only broken bikes' do
-      expect(station.release_bikes).to contain_exactly(broken_bike)
+      released = station.release_bikes
+      expect(released).to contain_exactly(broken_bike)
     end
 
     it 'removes broken bikes from station' do
