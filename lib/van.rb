@@ -1,27 +1,16 @@
-require_relative 'docking_station'
-
 class Van
-  attr_reader :broken_bikes , :fixed_bikes
+  attr_reader :bikes
 
-  def collect_broken(station)
-    @broken_bikes = station.removal
-    @broken_bikes
+  def initialize
+    @bikes = []
   end
 
-  def delivers_broken(garage)
-    garage.take_broken(@broken_bikes)
-    @broken_bikes = []
+  def collect_from(place)
+    @bikes = place.release_bikes
   end
 
-  def collect_fixed(garage)
-    @fixed_bikes = garage.return_fixed
-    @fixed_bikes
+  def deliver_to(place)
+    place.receive_bikes(@bikes.pop(@bikes.size))
   end
 
-  def delivers_fixed(station)
-    @fixed_bikes.each do |x|
-      station.dock_bike(x, true)
-    end
-    @fixed_bikes = []
-  end
 end

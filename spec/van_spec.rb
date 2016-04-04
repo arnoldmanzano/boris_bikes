@@ -1,54 +1,38 @@
 require 'van'
 
 describe Van do
-  before(:example) do
-    @bike = Bike.new
-    @bike2 = Bike.new
-    @ds = DockingStation.new
-    @ds.dock_bike(@bike)
-    @ds.dock_bike(@bike2, false)
+  subject(:van) { described_class.new }
+  let(:station) { double(:docking_station, release_bikes: [bike]) }
+  let(:garage) { double(:garage, release_bikes: [bike]) }
+  let(:bike) {double :bike }
+
+  describe '#collect_from' do
+    it 'allows vans to collect bikes from docking station' do
+      expect(station).to receive(:release_bikes)
+      van.collect_from(station)
+      expect(van.bikes).to contain_exactly(bike)
+    end
+
+    it 'allows vans to collect bikes from garages' do
+      expect(garage).to receive(:release_bikes)
+      van.collect_from(garage)
+      expect(van.bikes).to contain_exactly(bike)
+    end
   end
 
-  it 'van collect the broken bikes from the docking station' do
-    expect(subject.collect_broken(@ds)).to include @bike2
-    expect(subject.collect_broken(@ds)).not_to include @bike
-  end
+  describe '#deliver_to' do
+    it 'delivers broken bikes to a garage' do
+      van.collect_from(station)
+      expect(garage).to receive(:receive_bikes)
+      van.deliver_to(garage)
+      expect(van.bikes).to be_empty
+    end
 
-  it 'after the van collects, ensure only working bikes in docking station' do
-    subject.collect_broken(@ds)
-    expect(@ds.bikes).to include @bike
-    expect(@ds.bikes).not_to include @bike2
-  end
-
-  it 'delivers broken bikes to the garage' do
-    garage = Garage.new
-    subject.collect_broken(@ds)
-    expect(subject.delivers_broken(garage)).to be_empty
-  end
-
-  it 'collects fixed bikes from the garage' do
-    garage = Garage.new
-    bikes_to_fix = subject.collect_broken(@ds)
-    subject.delivers_broken(garage)
-    expect(subject.collect_fixed(garage)).to eq bikes_to_fix
-  end
-
-  it 'fixed bike is docked to the station again' do
-    garage = Garage.new
-    subject.collect_broken(@ds)
-    subject.delivers_broken(garage)
-    subject.collect_fixed(garage)
-    subject.delivers_fixed(@ds)
-    expect(@ds.bikes).to include @bike
-    expect(@ds.bikes).to include @bike2
-  end
-
-  it 'is empty after delivering fixed bikes to docking station' do
-    garage = Garage.new
-    subject.collect_broken(@ds)
-    subject.delivers_broken(garage)
-    subject.collect_fixed(garage)
-    subject.delivers_fixed(@ds)
-    expect(subject.fixed_bikes).to be_empty
+    it 'delivers fixed bikes to a station' do
+      van.collect_from(garage)
+      expect(station).to receive(:receive_bikes)
+      van.deliver_to(station)
+      expect(van.bikes).to be_empty
+    end
   end
 end

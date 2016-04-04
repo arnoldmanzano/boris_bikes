@@ -1,25 +1,33 @@
 require 'garage'
 
 describe Garage do
-  before(:example) do
-    @bike = Bike.new
-    @bike2 = Bike.new
-    @ds = DockingStation.new
-    @ds.dock_bike(@bike)
-    @ds.dock_bike(@bike2, false)
-    @van = Van.new
-    @broken = @van.collect_broken(@ds)
+  subject(:garage) { described_class.new }
+  let(:bike) { double(:bike, got_fixed: nil) }
+  let(:van) { double(:van, bikes: [bike]) }
+
+  describe '#initialize' do
+    it 'initializes with no bikes' do
+      expect(garage.bikes).to be_empty
+    end
   end
 
-  it 'takes broken bikes from the van' do
-    @van.delivers_broken(subject)
-    expect(subject.broken_bikes).to eq @broken
+  describe '#receive_bikes' do
+    it 'receives broken bikes from a van' do
+      garage.receive_bikes(van.bikes)
+      expect(garage.bikes).to contain_exactly(bike)
+    end
+
+    it 'fixes received bikes' do
+      expect(bike).to receive(:got_fixed)
+      garage.receive_bikes(van.bikes)
+    end
   end
 
-  it 'is empty after the van collects' do
-    @van.delivers_broken(subject)
-    @van.collect_fixed(subject)
-    expect(subject.broken_bikes).to be_empty
+  describe '#release_bikes' do
+    it 'releases fixed bikes' do
+      garage.receive_bikes(van.bikes)
+      expect(garage.release_bikes).to contain_exactly(bike)
+      expect(garage.bikes).not_to include(bike)
+    end
   end
-
 end

@@ -1,17 +1,21 @@
-require_relative 'docking_station'
-
 class Garage
-  attr_reader :broken_bikes
+  attr_reader :bikes
 
-  def take_broken(broken_bikes)
-    @broken_bikes = broken_bikes
+  def initialize
+    @bikes = []
   end
 
-  def return_fixed
-    fixed_bikes = @broken_bikes
-    fixed_bikes.each {|bike| bike.report_fixed}
-    @broken_bikes = []
-    fixed_bikes
+  def receive_bikes(bikes)
+    @bikes = bikes
+    fix_bikes
   end
 
+  def release_bikes
+    @bikes.pop(@bikes.size)
+  end
+
+  private
+  def fix_bikes
+    @bikes.each(&:got_fixed)
+  end
 end
