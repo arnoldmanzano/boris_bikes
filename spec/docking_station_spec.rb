@@ -1,42 +1,90 @@
 require 'docking_station'
 
 describe DockingStation do
+  subject(:station) { described_class.new }
+  let(:bike) { double(:bike, working?: true) }
+  let(:broken_bike) { double(:bike, working?: false) }
+  let(:van) { double(:van, bikes: [bike]) }
 
-  it { is_expected.to respond_to(:release_bike) }
+  describe '#initialize' do
+    it 'has a default capacity' do
+      expect(station.capacity).to eq DockingStation::DEFAULT_CAPACITY
+    end
 
-  it 'check if bike is working' do
-    bike = Bike.new
-    expect(bike.working?).to eq true
+    it 'can override capacity on initialize' do
+      expect(DockingStation.new(3).capacity).to eq 3
+    end
   end
 
-  it { is_expected.to respond_to(:dock_bike).with(1).argument }
+  describe '#release_bike' do
+    it 'raises an error if there are no bikes' do
+      expect{ station.release_bike }.to raise_error("No bikes")
+    end
 
-  it { is_expected.to respond_to(:bikes) }
+    it 'will not release a broken bike' do
+      station.dock(broken_bike)
+      expect{station.release_bike}.to raise_error("No working bikes")
+    end
 
-  it 'dock bike' do
-    bike = Bike.new
-    expect(subject.dock_bike(bike)).to include bike
+    it 'will release a working bike and not a broken bike' do
+      station.dock(broken_bike)
+      station.dock(bike)
+      station.dock(broken_bike)
+      expect(station.release_bike).to eq bike
+    end
   end
 
-  it 'check the same bike exists' do
-    bike = Bike.new
-    subject.dock_bike(bike)
-    expect(subject.bikes).to include bike
+  describe '#dock' do
+    it 'checks if the bike has been docked' do
+      station.dock(bike)
+      expect(station.bikes).to include bike
+    end
+
+    it 'raises an error if at capacity' do
+      station.capacity.times { station.dock(bike) }
+      expect{ station.dock(bike) }.to raise_error("Dock full")
+    end
+
+    it 'can dock a bike and report as broken' do
+      expect(bike).to receive(:got_broken)
+      station.dock(bike, broken: true)
+      expect(station.bikes).to include bike
+    end
   end
 
-  it 'release a bike when it is available' do
-    bike = Bike.new
-    subject.dock_bike(bike)
-    expect(subject.release_bike).to eq bike
+  describe '#release_bikes' do
+    before(:each) do
+      station.dock(bike)
+      station.dock(broken_bike)
+      station.dock(bike)
+    end
+
+    it 'releases only broken bikes' do
+      released = station.release_bikes
+      expect(released).to contain_exactly(broken_bike)
+    end
+
+    it 'removes broken bikes from station' do
+      station.release_bikes
+      expect(station.bikes).to_not include(broken_bike)
+    end
+
+    it 'raises an error when no more broken bikes' do
+      station.release_bikes
+      expect{ station.release_bikes }.to raise_error("No broken bikes")
+    end
   end
 
-  it 'raise an error when no bikes are available' do
-    expect { subject.release_bike }.to raise_error("No bikes available!")
-  end
+  describe '#receive_bikes' do
+    it 'receives fixed bikes from a van' do
+      station.receive_bikes(van.bikes)
+      expect(station.bikes).to include bike
+    end
 
-  it 'raise an error when station is full' do
-    DockingStation::DEFAULT_CAPACITY.times { subject.dock_bike(Bike.new) }
-    expect { subject.dock_bike(Bike.new) }.to raise_error("Station is full!")
+    it 'adds received bike to existing bikes in station' do
+      station.dock(broken_bike)
+      station.receive_bikes([bike])
+      expect(station.bikes).to contain_exactly(broken_bike, bike)
+    end
   end
-
 end
