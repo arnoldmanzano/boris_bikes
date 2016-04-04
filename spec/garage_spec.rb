@@ -1,40 +1,33 @@
 require 'garage'
 
 describe Garage do
-  let(:bike) { double :bike }
+  subject(:garage) { described_class.new }
+  let(:bike) { double(:bike, got_fixed: nil) }
+  let(:van) { double(:van, bikes: [bike]) }
 
   describe '#initialize' do
-    it { is_expected.to respond_to(:bikes) }
-
     it 'initializes with no bikes' do
-      expect(subject.bikes).to be_empty
+      expect(garage.bikes).to be_empty
     end
   end
 
   describe '#receive_bikes' do
-    it { is_expected.to respond_to(:receive_bikes).with(1).argument }
-
-    let(:van) { double(:van, :bikes => [bike]) }
-
     it 'receives broken bikes from a van' do
-      allow(bike).to receive(:fix).and_return(bike)
-      expect(subject.receive_bikes(van.bikes)).to eq [bike]
+      garage.receive_bikes(van.bikes)
+      expect(garage.bikes).to contain_exactly(bike)
     end
 
     it 'fixes received bikes' do
-      expect(bike).to receive(:fix)
-      subject.receive_bikes([bike])
+      expect(bike).to receive(:got_fixed)
+      garage.receive_bikes(van.bikes)
     end
   end
 
-  describe '#release' do
-    it { is_expected.to respond_to(:release) }
-
+  describe '#release_bikes' do
     it 'releases fixed bikes' do
-      allow(bike).to receive(:fix).and_return(bike)
-      subject.receive_bikes([bike])
-
-      expect(subject.release).to eq [bike]
+      garage.receive_bikes(van.bikes)
+      expect(garage.release_bikes).to contain_exactly(bike)
+      expect(garage.bikes).not_to include(bike)
     end
   end
 end

@@ -1,5 +1,3 @@
-require_relative 'van'
-
 class Garage
   attr_reader :bikes
 
@@ -10,16 +8,14 @@ class Garage
   def receive_bikes(bikes)
     @bikes = bikes
     fix_bikes
-    @bikes
   end
 
-  def release
+  def release_bikes
     @bikes.pop(@bikes.size)
   end
 
   private
-
   def fix_bikes
-    @bikes.each(&:fix)
+    @bikes.each(&:got_fixed)
   end
 end
